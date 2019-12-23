@@ -147,9 +147,7 @@
   </div>
 <div>
   <div><input type="button"  class="makeupbutton" onclick="getmakeup()" value="Выбрать &#13;&#10;макияж"/></div>
- <div> <form action="#" method="POST">
-   {% csrf_token %}<input type="button"  class="savemakeup" onclick="savecombination()" value="Сохранить"/>
-  </form>
+ <div> <input type="button"  class="savemakeup" onclick="savecombination()" value="Сохранить"/> </form>
   </div> 
 </div>
   <canvas id=canvas width=287 height=373></canvas>
@@ -171,12 +169,14 @@
   function savecombination(){
   $( document ).ready(function() {
      function onchange (evt) {
-      alert("Я ТУТ")
        color=5;
        $.ajax({
-         url: 'savecombination',
+         url: 'http://127.0.0.1:8000/savecombination',
          data: {'color': color},
-         type: 'POST'
+         type: 'POST',
+         headers: {
+        "X-CSRFTOKEN": "{{ csrf_token }}"
+}
        }).done(function(response){
          console.log(response);
        });
