@@ -1,0 +1,21 @@
+{% extends "mainApp/wrapper.html" %}
+{% block content %}
+        <div class="container">
+            <div class="container-header">
+                <h2 class="container-header-text">Задайте вопрос</h2>
+            </div>
+            <div class="container-content">
+                <form class="form" action="/sendcontact" method="post">
+                    {% csrf_token %}
+                    <div class="form_area">
+                      <input type="text" placeholder="Ваш E-mail" id="id_email" name="email"  class="form-input">
+                    </div>
+                    <div class="form_area">
+                      <textarea placeholder="Ваш вопрос" id="id_message" name="message" class="form-textarea" ></textarea>
+                    </div>
+                    <button type="submit" class="my_btn">Отправить</button>
+                </form>
+
+            </div>
+        </div>
+{% endblock %}

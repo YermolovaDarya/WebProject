@@ -1,0 +1,410 @@
+{% block content %}
+{% load static %}
+  <style type="text/css">
+    .custom-size {
+      width: 315px;
+      height: 250px;
+    }
+    .color-block {
+        max-width: 340px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .color-preview-box {
+        display: inline-block;
+        width: .75em;
+        height: .75em;
+        vertical-align: middle;
+        padding: 2px;
+        background-clip: content-box;
+        border: solid 1px #888;
+      }
+  </style>
+  
+
+
+<style>
+  input[type="button"].makeupbutton{
+  width: 100%;
+  height: 60px;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  border: 2px solid #333;
+  background-color:  #333;
+  position:relative;
+  top:70px;
+  }
+  input[type="button"].savemakeup{
+  width: 100%;
+  height: 60px;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  border: 2px solid #333;
+  background-color:  #333;
+  position:relative;
+  top:140px;
+  }
+  input[type="button"].buttonstr{
+    width:60px;
+    height:60px;
+    cursor: pointer;
+    border: 2px solid #333;
+    background-color:  #333;
+  }
+  #invert {
+    background: url("{% static 'mainApp/img/invert.png' %}");
+    background-size:100%;    
+    }
+  #triade {
+    background: url("{% static 'mainApp/img/triade.png' %}");
+    background-size:100%;    
+  }
+  #tetrade {
+    background: url("{% static 'mainApp/img/tetrade.png' %}");
+    background-size:100%;    
+  }
+  #squaree {
+    background: url("{% static 'mainApp/img/square.png' %}");
+    background-size:100%;    
+  }
+  #analogy {
+    background: url("{% static 'mainApp/img/analogy.png' %}");
+    background-size:100%;    
+  }
+  #split {
+    background: url("{% static 'mainApp/img/split.png' %}");
+    background-size:100%;    
+  }
+  .colorblock{
+  width: 50px;
+  height: 50px;
+  }
+  #contentblock{
+    display: flex;
+    justify-content: flex-start;
+    flex-direction:column;
+    position:relative;
+  }
+  canvas {
+  border: 1px solid black;
+}
+ #button-block{
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+
+ }
+ #color-picker{
+  display: flex;
+  justify-content: flex-start;
+  flex-direction:column;
+ }
+ #container{
+   display:flex;
+   justify-content: space-around;
+   padding:5%;
+ }
+  </style>
+<div id=container>
+  <div id=color-picker> 
+      <div>
+        <input
+          id="color-block"
+          type="text"
+          value="#ff8800"
+          data-wheelcolorpicker
+          data-wcp-format="css"
+          data-wcp-layout="block"
+          data-wcp-cssClass="custom-size"
+          data-wcp-autoResize="false"
+        />
+      </div>
+      <br>
+      <br/>
+      <div>
+        Выбранный цвет:
+        <span class="color-preview-box"></span>
+        <span class="color-preview-text"></span>
+      </p>
+    </div>
+    </div>
+  
+  <div id=button-block>
+  <div><input type="button" class="buttonstr" id="invert"  onclick="invert()" /> Комплементарная </div>
+  <div><input type="button" class="buttonstr"id="triade" onclick="triade()" /> Триада </div>
+  <div><input type="button" class="buttonstr"id="tetrade" onclick="tetrade()" /> Тетрада </div>
+  <div><input type="button" class="buttonstr"id="squaree" onclick="squaree()" /> Квадрат </div>
+  <div><input type="button" class="buttonstr"id="analogy" onclick="analogy()" /> Аналогия </div>
+  <div><input type="button" class="buttonstr"id="split" onclick="split()" /> Сплит-аналогия</div>
+  </div>
+  <div id="contentblock">
+  <div id="color1" class="colorblock"></div>
+  <div id="color2" class="colorblock"></div>
+  <div id="color3" class="colorblock"></div>
+  <div id="color4" class="colorblock"></div>
+  </div>
+<div>
+  <div><input type="button"  class="makeupbutton" onclick="getmakeup()" value="Выбрать &#13;&#10;макияж"/></div>
+ <div> <form action="#" method="POST">
+   {% csrf_token %}<input type="button"  class="savemakeup" onclick="savecombination()" value="Сохранить"/>
+  </form>
+  </div> 
+</div>
+  <canvas id=canvas width=287 height=373></canvas>
+</div>
+
+<script type="text/javascript">
+  $(function() {
+    $('#color-block').on('colorchange', function(e) {
+      var color = $(this).wheelColorPicker('value');
+      var alpha = $(this).wheelColorPicker('color').a;
+      $('.color-preview-box').css('background-color', color);
+      $('.color-preview-text').text(color);
+      $('.color-preview-alpha').text(Math.round(alpha * 100) + '%');
+    });
+  });
+  </script>
+
+<script>
+  function savecombination(){
+  $( document ).ready(function() {
+     function onchange (evt) {
+      alert("Я ТУТ")
+       color=5;
+       $.ajax({
+         url: 'savecombination',
+         data: {'color': color},
+         type: 'POST'
+       }).done(function(response){
+         console.log(response);
+       });
+     }
+     window.onblur = onchange;
+   }); 
+  };
+  var canvas = document.getElementById("canvas");
+    var context = canvas.getContext("2d");   
+    var img = new Image();
+    img.src =  "{% static 'mainApp/img/1.jpg' %}";
+    img.crossOrigin = 'anonymous';
+    img.onload = function() {                
+    context.drawImage(img, 0, 0);}
+function getmakeup(){
+  
+    var canvas = document.getElementById("canvas");
+    var context = canvas.getContext("2d");   
+    var img = new Image();
+    img.src =  "{% static 'mainApp/img/1.jpg' %}";
+    img.crossOrigin = 'anonymous';
+    img.onload = function() {                
+    context.drawImage(img, 0, 0);
+    imageData = context.getImageData(0,0, img.width, img.height);
+    str=1148;
+    if (globalcolors.r3==-1){
+      globalcolors.r3=globalcolors.r1;
+      globalcolors.g3=globalcolors.g1;
+      globalcolors.b3=globalcolors.b1;
+      globalcolors.r4=globalcolors.r2;
+      globalcolors.g4=globalcolors.g2;
+      globalcolors.b4=globalcolors.b2;
+    }
+    else if(globalcolors.r4==-1){
+      globalcolors.r4=globalcolors.r3;
+      globalcolors.g4=globalcolors.g3;
+      globalcolors.b4=globalcolors.b3;
+    }
+    rectangle(0.03,153,150,147,122,124,globalcolors.r1,globalcolors.g1,globalcolors.b1,-0.002,-0.005);
+    rectangle(0.07,152,149,146,120,122,globalcolors.r1,globalcolors.g1,globalcolors.b1,-0.01,-0.015);
+    rectangle(0.10,151,148,145,118,120,globalcolors.r1,globalcolors.g1,globalcolors.b1,-0.01,-0.015);
+    rectangle(0.13,150,144,141,116,118,globalcolors.r1,globalcolors.g1,globalcolors.b1,-0.012,-0.025);
+    rectangle(0.15,149,143,140,114,116,globalcolors.r1,globalcolors.g1,globalcolors.b1,-0.012,-0.025);
+    rectangle(0.18,148,142,139,112,114,globalcolors.r1,globalcolors.g1,globalcolors.b1,-0.01,-0.035);
+    rectangle(0.20,147,142,139,110,112,globalcolors.r1,globalcolors.g1,globalcolors.b1,-0.02,-0.035);
+    rectangle(0.24,147,143,139,93,97,globalcolors.r1,globalcolors.g1,globalcolors.b1,-0.02,-0.05);
+    rectangle(0.25,147,143,139,97,100,globalcolors.r1,globalcolors.g1,globalcolors.b1,-0.02,-0.06);
+    rectangle(0.26,147,142,139,100,103,globalcolors.r1,globalcolors.g1,globalcolors.b1,-0.02,-0.06);
+    rectangle(0.27,147,142,139,103,105,globalcolors.r1,globalcolors.g1,globalcolors.b1,-0.02,-0.06);
+    rectangle(0.26,147,142,139,105,107,globalcolors.r1,globalcolors.g1,globalcolors.b1,-0.02,-0.06);
+    rectangle(0.25,147,142,139,107,110,globalcolors.r1,globalcolors.g1,globalcolors.b1,-0.02,-0.06);
+    rectangle(0.24,149,144,140,91,93,globalcolors.r1,globalcolors.g1,globalcolors.b1,-0.02,-0.03);
+    rectangle(0.22,150,144,140,89,91,globalcolors.r1,globalcolors.g1,globalcolors.b1,-0.02,-0.03);
+    rectangle(0.21,151,146,143,87,89,globalcolors.r1,globalcolors.g1,globalcolors.b1,-0.02,-0.03);
+    rectangle(0.20,152,146,143,85,87,globalcolors.r1,globalcolors.g1,globalcolors.b1,-0.02,-0.03);
+    rectangle(0.15,153,147,144,83,85,globalcolors.r1,globalcolors.g1,globalcolors.b1,-0.01,-0.03);
+    rectangle(0.1,155,152,150,81,83,globalcolors.r1,globalcolors.g1,globalcolors.b1,-0.02,-0.02);
+    rectangle(0.06,157,154,150,79,81,globalcolors.r1,globalcolors.g1,globalcolors.b1,-0.00,-0.01);
+  
+    rectangle(0.05,150,144,142,89,91,globalcolors.r2,globalcolors.g2,globalcolors.b2,-0.01,-0.02);
+    rectangle(0.08,149,144,142,87,89,globalcolors.r2,globalcolors.g2,globalcolors.b2,-0.01,-0.01);
+    rectangle(0.1,150,145,143,85,87,globalcolors.r2,globalcolors.g2,globalcolors.b2,-0.01,-0.02);
+    rectangle(0.12,150,145,144,83,85,globalcolors.r2,globalcolors.g2,globalcolors.b2,-0.01,-0.02);
+    rectangle(0.14, 152,148,145,85,89,globalcolors.r2,globalcolors.g2,globalcolors.b2,-0.01,-0.02);
+    rectangle(0.15,155,152,146,83,85,globalcolors.r2,globalcolors.g2,globalcolors.b2,-0.02,-0.03);
+    rectangle(0.2,161,155,150,79,83,globalcolors.r2,globalcolors.g2,globalcolors.b2,-0.01,-0.03);
+    rectangle(0.22, 161,153,150,75,79, globalcolors.r2,globalcolors.g2,globalcolors.b2, -0.01,-0.03);
+    rectangle(0.07,165,163,161,75,78,globalcolors.r2,globalcolors.g2,globalcolors.b2,0.03,0.032);
+    rectangle(0.07,168,164,161,78,86,globalcolors.r2,globalcolors.g2,globalcolors.b2,0.03,0.032);
+    rectangle(0.05,169,165,162,86,90,globalcolors.r2,globalcolors.g2,globalcolors.b2,0.02,0.025);
+    rectangle(0.04,168,165,162,90,93,globalcolors.r2,globalcolors.g2,globalcolors.b2,0.02,0.015);
+    rectangle(0.02,167,164,162,93,96,globalcolors.r2,globalcolors.g2,globalcolors.b2,0.01,0.01);
+    rectangle(0.015,169,167,162,96,98,globalcolors.r2,globalcolors.g2,globalcolors.b2,0.005,0.01);
+    rectangle(0.01,169,167,162,98,100,globalcolors.r2,globalcolors.g2,globalcolors.b2,0.005,0.01);
+  
+    rectangle(0.1,147,145,140,110,112,globalcolors.r3,globalcolors.g3,globalcolors.b3,-0.00,-0.02);
+    rectangle(0.12,148,147,141,112,114,globalcolors.r3,globalcolors.g3,globalcolors.b3,-0.00,-0.03);
+    rectangle(0.15,149,147,142,114,116,globalcolors.r3,globalcolors.g3,globalcolors.b3,-0.013,-0.03);
+    rectangle(0.17,150,148,143,116,118,globalcolors.r3,globalcolors.g3,globalcolors.b3,-0.013,-0.03);
+    rectangle(0.19,151,148,145,118,120,globalcolors.r3,globalcolors.g3,globalcolors.b3,-0.023,-0.04);
+    rectangle(0.20,152,149,146,120,122,globalcolors.r3,globalcolors.g3,globalcolors.b3,-0.013,-0.03);
+    rectangle(0.21,153,150,147,122,124,globalcolors.r3,globalcolors.g3,globalcolors.b3,-0.014,-0.04);
+    rectangle(0.23,154,151,148,124,126,globalcolors.r3,globalcolors.g3,globalcolors.b3,-0.015,-0.05);
+    rectangle(0.24,155,152,149,126,128,globalcolors.r3,globalcolors.g3,globalcolors.b3,-0.015,-0.06);
+    rectangle(0.23,156,153,151,128,130,globalcolors.r3,globalcolors.g3,globalcolors.b3,-0.015,-0.05);
+    rectangle(0.21,156,153,151,130,132,globalcolors.r3,globalcolors.g3,globalcolors.b3,-0.015,-0.06);
+    rectangle(0.16,156,153,151,132,134,globalcolors.r3,globalcolors.g3,globalcolors.b3,-0.025,-0.06);
+    rectangle(0.04,160,158,156,132,134,globalcolors.r3,globalcolors.g3,globalcolors.b3, 0.01, 0.02);
+    rectangle(0.035,162,159,156,130,132,globalcolors.r3,globalcolors.g3,globalcolors.b3, 0.01, 0.01);
+    rectangle(0.03,163,159,156,123,130,globalcolors.r3,globalcolors.g3,globalcolors.b3, 0.01, 0.01);
+    rectangle(0.028,165,159,157,120,123,globalcolors.r3,globalcolors.g3,globalcolors.b3, 0.01, 0.01);
+    rectangle(0.026,166,162,158,118,120,globalcolors.r3,globalcolors.g3,globalcolors.b3, 0.01, 0.01);
+    rectangle(0.025,167,163,159,116,118,globalcolors.r3,globalcolors.g3,globalcolors.b3, 0.02, 0.01);
+    rectangle(0.023,168,164,160,114,116,globalcolors.r3,globalcolors.g3,globalcolors.b3, 0.01, 0.01);
+    rectangle(0.02,168,164,160,112,114,globalcolors.r3,globalcolors.g3,globalcolors.b3, 0.0, 0.01);
+    rectangle(0.01,169,164,161,110,112,globalcolors.r3,globalcolors.g3,globalcolors.b3, 0.0, 0.01);
+    
+    rectangle(0.005,167,163,159,116,118,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.00, 0.01);
+    rectangle(0.01,168,164,160,114,116,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.01, 0.02);
+    rectangle(0.02 ,168,164,160,112,114,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.01, 0.02);
+    rectangle(0.03,169,164,160,110,112,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.01, 0.01);
+    rectangle(0.05,169,164,161,108,110,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.01, 0.02);
+    rectangle(0.08,169,164,162,106,108,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.01, 0.02);
+    rectangle(0.1,170,166,163,104,106,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.01, 0.02);
+    rectangle(0.15,170,167,164,102,104,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.01, 0.02);
+    rectangle(0.16,170,167,164,100,102,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.01, 0.02);
+    rectangle(0.14,170,167,164,98,100,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.01, 0.02);
+    rectangle(0.12,170,167,164,96,98,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.01, 0.02);
+    rectangle(0.10,169,167,164,94,96,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.01, 0.02);
+    rectangle(0.08,170,167,165,92,94,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.01, 0.02);
+    rectangle(0.07,170,167,165,90,92,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.01, 0.02);
+    rectangle(0.05,170,167,165,88,90,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.01, 0.02);
+    rectangle(0.04,170,167,165,86,88,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.01, 0.02);
+    rectangle(0.03,170,167,164,84,86,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.01, 0.01);
+    rectangle(0.02,170,167,162,82,84,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.01, 0.01);
+    rectangle(0.01,170,167,160,80,82,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.01, 0.01);
+
+    rectangle(0.01,152,150,147,195,197,globalcolors.r3,globalcolors.g3,globalcolors.b3, 0.0, 0.01);
+    rectangle(0.02,152,150,147,193,195,globalcolors.r3,globalcolors.g3,globalcolors.b3, 0.0, 0.01);
+    rectangle(0.03,152,150,147,190,193,globalcolors.r3,globalcolors.g3,globalcolors.b3, 0.006, 0.01);
+    rectangle(0.04,152,150,147,188,190,globalcolors.r3,globalcolors.g3,globalcolors.b3, 0.006, 0.02);
+    rectangle(0.05,152,150,147,186,188,globalcolors.r3,globalcolors.g3,globalcolors.b3, 0.007, 0.02);
+    rectangle(0.05,152,150,147,184,186,globalcolors.r3,globalcolors.g3,globalcolors.b3, 0.008, 0.02);
+    rectangle(0.05,151,150,147,182,184,globalcolors.r3,globalcolors.g3,globalcolors.b3, 0.009, 0.02);
+    rectangle(0.05,151,150,147,180,182,globalcolors.r3,globalcolors.g3,globalcolors.b3, 0.01, 0.02);
+    rectangle(0.05, 151,150,147,178,180,globalcolors.r3,globalcolors.g3,globalcolors.b3, 0.01, 0.02);
+    rectangle(0.05,150,150,147,176,178,globalcolors.r3,globalcolors.g3,globalcolors.b3, 0.01, 0.02);
+    rectangle(0.05,150,150,147,174,176,globalcolors.r3,globalcolors.g3,globalcolors.b3, 0.01, 0.02);
+    rectangle(0.03,150,149,146,170,172,globalcolors.r3,globalcolors.g3,globalcolors.b3, -0.0, -0.007);
+    rectangle(0.04,150,149,145,172,174,globalcolors.r3,globalcolors.g3,globalcolors.b3, -0.0, -0.007);
+    rectangle(0.04,150,149,145,172,174,globalcolors.r3,globalcolors.g3,globalcolors.b3, -0.0, -0.007);
+    rectangle(0.10,147,143,134,174,176,globalcolors.r3,globalcolors.g3,globalcolors.b3, -0.01, -0.02);
+    rectangle(0.15,147,143,133,176,178,globalcolors.r3,globalcolors.g3,globalcolors.b3, -0.01, -0.02);
+    rectangle(0.20,145,143,132,178,180,globalcolors.r3,globalcolors.g3,globalcolors.b3, -0.01, -0.02);
+    rectangle(0.25,143,140,131,180,182,globalcolors.r3,globalcolors.g3,globalcolors.b3, -0.01, -0.02);
+    rectangle(0.28 ,140,138,129,182,184,globalcolors.r3,globalcolors.g3,globalcolors.b3, -0.01, -0.02);
+    rectangle(0.25 ,138,135,130,184,186,globalcolors.r3,globalcolors.g3,globalcolors.b3, -0.01, -0.02);
+    rectangle(0.23 ,136,133,128,186,188,globalcolors.r3,globalcolors.g3,globalcolors.b3, -0.01, -0.02);
+    rectangle(0.20 ,134,132,127,188,190,globalcolors.r3,globalcolors.g3,globalcolors.b3, -0.01, -0.02);
+    rectangle(0.18 ,132,130,126,190,192,globalcolors.r3,globalcolors.g3,globalcolors.b3, -0.01, -0.02);
+    rectangle(0.15 ,132,128,125,192,194,globalcolors.r3,globalcolors.g3,globalcolors.b3, -0.01, -0.02);
+    rectangle(0.13 ,131,128,123,194,196,globalcolors.r3,globalcolors.g3,globalcolors.b3, -0.01, -0.02);
+    rectangle(0.10 ,130,126,122,196,198,globalcolors.r3,globalcolors.g3,globalcolors.b3, -0.01, -0.02);
+
+    rectangle(0.01 ,134,132,127,188,190,globalcolors.r1,globalcolors.g1,globalcolors.b1, -0.0, -0.001);
+    rectangle(0.02 ,132,130,126,190,192,globalcolors.r1,globalcolors.g1,globalcolors.b1, -0.0, -0.002);
+    rectangle(0.04 ,132,128,125,192,194,globalcolors.r1,globalcolors.g1,globalcolors.b1, -0.00, -0.005);
+    rectangle(0.07 ,131,128,123,194,196,globalcolors.r1,globalcolors.g1,globalcolors.b1, -0.00, -0.008);
+    rectangle(0.09 ,130,126,122,196,198,globalcolors.r1,globalcolors.g1,globalcolors.b1, -0.01, -0.01);
+    rectangle(0.18 ,130,126,122,198,200,globalcolors.r1,globalcolors.g1,globalcolors.b1, -0.01, -0.02);
+    rectangle(0.19 ,130,126,122,200,202,globalcolors.r1,globalcolors.g1,globalcolors.b1, -0.01, -0.02);
+    rectangle(0.20 ,129,126,122,202,204,globalcolors.r1,globalcolors.g1,globalcolors.b1, -0.01, -0.02);
+    rectangle(0.21 ,128,125,122,204,206,globalcolors.r1,globalcolors.g1,globalcolors.b1, -0.01, -0.02);
+    rectangle(0.2 ,128,125,122,206,208,globalcolors.r1,globalcolors.g1,globalcolors.b1, -0.01, -0.017);
+    rectangle(0.18 ,128,126,123,208,210,globalcolors.r1,globalcolors.g1,globalcolors.b1, -0.01, -0.017);
+    rectangle(0.16 ,128,126,123,210,212,globalcolors.r1,globalcolors.g1,globalcolors.b1, -0.01, -0.017);
+    rectangle(0.14 ,128,126,123,212,214,globalcolors.r1,globalcolors.g1,globalcolors.b1, -0.01, -0.015);
+    rectangle(0.13 ,129,127,124,214,216,globalcolors.r1,globalcolors.g1,globalcolors.b1, -0.01, -0.02);
+    rectangle(0.12 ,130,127,124,216,218,globalcolors.r1,globalcolors.g1,globalcolors.b1, -0.01, -0.02);
+    rectangle(0.11 ,131,127,125,218,220,globalcolors.r1,globalcolors.g1,globalcolors.b1, -0.01, -0.02);
+    rectangle(0.1 ,131,128,125,220,222,globalcolors.r1,globalcolors.g1,globalcolors.b1, -0.01, -0.02);
+    rectangle(0.09 ,132,128,126,222,224,globalcolors.r1,globalcolors.g1,globalcolors.b1, -0.01, -0.02);
+    rectangle(0.07 ,133,128,127,224,226,globalcolors.r1,globalcolors.g1,globalcolors.b1, -0.02, -0.005);
+
+    rectangle(0.01 ,130,127,124,216,218,globalcolors.r2,globalcolors.g2,globalcolors.b2, -0.00, -0.001);
+    rectangle(0.02 ,131,127,125,218,220,globalcolors.r2,globalcolors.g2,globalcolors.b2, -0.00, -0.002);
+    rectangle(0.03 ,131,128,125,220,222,globalcolors.r2,globalcolors.g2,globalcolors.b2, -0.001, -0.005);
+    rectangle(0.04 ,132,128,126,222,224,globalcolors.r2,globalcolors.g2,globalcolors.b2, -0.002, -0.008);
+    rectangle(0.06 ,133,129,127,224,226,globalcolors.r2,globalcolors.g2,globalcolors.b2, -0.003, -0.01);
+    rectangle(0.1 ,134,130,128,226,228, globalcolors.r2,globalcolors.g2,globalcolors.b2, -0.005, -0.01);
+    rectangle(0.13 ,134,130,128,228,230,globalcolors.r2,globalcolors.g2,globalcolors.b2, -0.005, -0.01);
+    rectangle(0.08 ,134,130,129,230,232,globalcolors.r2,globalcolors.g2,globalcolors.b2, -0.01, -0.02);
+    rectangle(0.01 ,139,136,134,230,232,globalcolors.r2,globalcolors.g2,globalcolors.b2, 0.01, 0.01);
+    rectangle(0.01 ,141,136,134,228,230,globalcolors.r2,globalcolors.g2,globalcolors.b2, 0.01, 0.02);
+    rectangle(0.01 ,142,136,134,226,228,globalcolors.r2,globalcolors.g2,globalcolors.b2, 0.01, 0.025);
+    rectangle(0.011 ,143,139,135,224,226,globalcolors.r2,globalcolors.g2,globalcolors.b2, 0.016, 0.03);
+    rectangle(0.013 ,144,140,136,222,224,globalcolors.r2,globalcolors.g2,globalcolors.b2, 0.018, 0.035);
+    rectangle(0.015 ,145,142,137,220,222,globalcolors.r2,globalcolors.g2,globalcolors.b2, 0.02, 0.04);
+    rectangle(0.017 ,146,142,138,218,220,globalcolors.r2,globalcolors.g2,globalcolors.b2, 0.024, 0.045);
+    rectangle(0.017 ,147,143,139,216,218,globalcolors.r2,globalcolors.g2,globalcolors.b2, 0.022, 0.05);
+    rectangle(0.015 ,148,144,141,214,216,globalcolors.r2,globalcolors.g2,globalcolors.b2, 0.019, 0.04);
+    rectangle(0.014 ,149,145,142,212,214,globalcolors.r2,globalcolors.g2,globalcolors.b2, 0.017, 0.03);
+    rectangle(0.013 ,150,146,143,210,212,globalcolors.r2,globalcolors.g2,globalcolors.b2, 0.015, 0.02);
+    rectangle(0.012 ,151,147,144,208,210,globalcolors.r2,globalcolors.g2,globalcolors.b2, 0.014, 0.025);
+    rectangle(0.011 ,151,147,145,206,208,globalcolors.r2,globalcolors.g2,globalcolors.b2, 0.013, 0.025);
+    rectangle(0.01  ,152,148,146,204,206,globalcolors.r2,globalcolors.g2,globalcolors.b2, 0.01, 0.02);
+    rectangle(0.008 ,152,148,146,202,204,globalcolors.r2,globalcolors.g2,globalcolors.b2, 0.01, 0.015);
+    rectangle(0.006 ,152,149,147,200,202,globalcolors.r2,globalcolors.g2,globalcolors.b2, 0.01, 0.01);
+
+    rectangle(0.005 ,150,146,143,210,212,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.003, 0.01);
+    rectangle(0.01 ,151,147,144,208,210,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.007, 0.01);
+    rectangle(0.015 ,151,147,145,206,208,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.009, 0.01);
+    rectangle(0.02 ,152,148,146,204,206,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.01, 0.01);
+    rectangle(0.02 ,152,148,146,202,204,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.01, 0.01);
+    rectangle(0.02 ,152,149,147,200,202,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.01, 0.01);
+    rectangle(0.02 ,154,149,147,184,202,globalcolors.r4,globalcolors.g4,globalcolors.b4, 0.01, 0.02);
+
+    context.putImageData(imageData, 0, 0);
+    }
+};
+function rectangle(tr,j1,j2,j3,i1,i2,globalr,globalg,globalb,razn1,razn2){
+    for (let j = j1; j>j2; j--){
+      tr=tr+razn1;
+    for (let i = j*str+4*i1; i <j*str+4*i2 ; i += 4) {
+      var red, green, blue, red1,green1,blue1;
+      red = imageData.data[i]; 
+      green = imageData.data[i + 1]; 
+      blue = imageData.data[i + 2];   
+      red1 = red +(globalr-red)*tr;
+      green1 = green +(globalg-green)*tr;
+      blue1 = blue +(globalb-blue)*tr;
+      
+      imageData.data[i] = red1;  
+      imageData.data[i + 1] = green1;
+      imageData.data[i + 2] = blue1;}}
+    for (let j = j2; j>j3; j--){
+      tr=tr+razn2;
+    for (let i = j*str+4*i1; i <j*str+4*i2 ; i += 4) {
+      var red, green, blue, red1,green1,blue1;
+      red = imageData.data[i]; 
+      green = imageData.data[i + 1]; 
+      blue = imageData.data[i + 2];   
+      red1 = red +(globalr-red)*tr;
+      green1 = green +(globalg-green)*tr;
+      blue1 = blue +(globalb-blue)*tr;
+      imageData.data[i] = red1;  
+      imageData.data[i + 1] = green1;
+      imageData.data[i + 2] = blue1;}}
+};
+</script>
+{% endblock %}

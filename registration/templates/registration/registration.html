@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>Регистрация</title>
+	{% load static %}
+    <link rel="stylesheet" href="{% static 'registration/css/reset.css'%}" type="text/css">
+	<link rel="stylesheet" href="{% static 'registration/css/animate.css'%}" type="text/css">
+    <link rel="stylesheet" href="{% static 'registration/css/style.css'%}" type="text/css">
+</head>
+<body>
+	<div id="container">
+		<form method="post" action="/registration" class="form">
+			{% csrf_token %}
+			<p><a href="/goauthentication">Есть аккаунт? Войдите</a></p>
+			<div id="form-control-feedback">{{error}}</div>
+			<input type="name" id="name" name="name" placeholder='Логин' pattern="[^0-9]+"   required>
+			<input type="name" id="email" name="email"  placeholder="E-mail(example@email.com)" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+			<input type="password" id="password" name="password"  placeholder="Пароль" pattern="[A-Za-z0-9]{6,}"
+			title=" Пароль должен содержать от 6 знаков. Допускается использовать цифры и буквы." required>
+			<input type="password" id="confirm_password" name="confirm_password" placeholder="Подтвердите пароль" pattern="[A-Za-z0-9]{6,}"required >
+			<div id="lower2">
+				<input type="submit" id ="submit2" value="Зарегистрироваться">
+			</div>
+			
+		</form>
+	</div>
+	{% for val in context%}
+	  <p>{{val}}</p>
+	{% endfor %} 
+</body>
+</html>
+	
+	
+	
+	

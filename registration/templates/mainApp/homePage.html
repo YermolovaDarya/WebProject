@@ -1,0 +1,15 @@
+{% extends "mainApp/wrapper.html" %}
+{% block content %}
+<body>
+    
+    <main> 
+        <div class="main_text">
+            <p class="about">Этот инструмент позволит вам выбрать подходящую цветовую схему и макияж с выбранным сочетанием цветов
+            {{login}}{{email}} </p>
+        </div> 
+    {% include "mainApp/includes/colorPicker.html"%}
+    </main>
+
+
+</body>
+{% endblock %}

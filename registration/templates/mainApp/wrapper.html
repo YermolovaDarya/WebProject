@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+ <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Colormakeup</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'mainApp/css/wrapper.css'%}" type="text/css">
+    <link type="text/css" rel="stylesheet" href="{% static 'mainApp/css/wheelcolorpicker.css'%}" />
+    {% block extrahead %}
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script type="text/javascript" src="{% static 'mainApp/js/jquery.wheelcolorpicker.js' %}"></script>
+    <script type="text/javascript" src="{% static 'mainApp/js/mycolorscheme.js' %}"></script>
+    <script type="text/javascript" src="{% static 'mainApp/js/drawmakeup.js' %}"></script>
+    {% endblock extrahead %}
+  </head>
+  <body>
+    <div class="header">
+        <nav class="menu">
+            <ul class="menu-main">
+              <li><a href="/main">Создать</a></li>
+              <li><a href="/goauthentication">Войти</a></li>
+              <li><a href="/userpage">Мои сочетания</a></li>
+              <li><a href="/contact">Обратная связь</a></li>
+              <li><a href="/logout">Выйти</a></li>
+            </ul>
+          </nav>
+      </div>
+{% block content %}
+{% endblock %}
+  <footer class="footer">
+      <p>Проект выполнен в рамках зачётного задания<br>  Направление «Программирование и информационные технологии» факультета
+              Прикладной математики — процессов управления Санкт-Петербургского государственного университета.
+      </p>   
+    </footer>
+</body>
+</html>
